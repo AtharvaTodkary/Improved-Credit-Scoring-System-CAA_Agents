@@ -13,6 +13,7 @@ export default function FormInput(props) {
         name={props.name}
         placeholder={props.placeholder}
         onChange={props.onChange}
+        required
       />
     </>
   );

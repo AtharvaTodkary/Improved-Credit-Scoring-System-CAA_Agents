@@ -5,64 +5,40 @@ import ResultDisplay from "./ResultDisplay";
 
 export default function Simulate() {
   const [simulateScore, setSimulateScore] = useState({
-    actions: [
-      {
-        type: "payment_history",
-        params: {
-          on_time: "",
-          missed: "",
-        },
-      },
-      {
-        type: "credit_utilization",
-        params: {
-          debt: "",
-          limit: "",
-        },
-      },
-      {
-        type: "credit_history_length",
-        params: {
-          age: "",
-        },
-      },
-      {
-        type: "new_credit",
-        params: {
-          inquiries: "",
-        },
-      },
-      {
-        type: "credit_mix",
-        params: {
-          accounts: "",
-        },
-      },
-    ],
+    on_time: "",
+    missed: "",
+    debt: "",
+    limit: "",
+    age: "",
+    inquiries: "",
+    accounts: "",
   });
+
+  const [finalScore, setFinalScore] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "hhtp://localhost:8000/simulate",
+        "http://localhost:9000/simulate",
         simulateScore
       );
-      setSimulateScore(response.data.final_score);
-      console.log(response.data);
+      setFinalScore(response.data.final_score);
     } catch (error) {
       console.error("ERROR", error);
     }
   };
-  function handleChange(event) {
+
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    setSimulateScore((preVal) => {
-      return {
-        ...preVal,
-        [name]: value,
-      };
+    setSimulateScore(prevVal => {
+      return{
+        ...prevVal,
+        [name]:value
+      }
     });
-  }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-center">
@@ -78,7 +54,6 @@ export default function Simulate() {
                       name="on_time"
                       onChange={handleChange}
                     />
-                    {/* <h5>{simulateScore.on_time}</h5> */}
                   </div>
                   <div className="col-md-4 border p-1">
                     <FormInput
@@ -92,7 +67,7 @@ export default function Simulate() {
                 <div className="col-md-12 d-flex justify-content-evenly p-3">
                   <div className="col-md-4 border p-1">
                     <FormInput
-                      label="Current Depts"
+                      label="Current Debt"
                       type="number"
                       name="debt"
                       onChange={handleChange}
@@ -110,7 +85,7 @@ export default function Simulate() {
                 <div className="col-md-12 d-flex justify-content-evenly p-3">
                   <div className="col-md-4 border p-1">
                     <FormInput
-                      label="Account Age(years) :"
+                      label="Account Age (years) :"
                       type="number"
                       name="age"
                       onChange={handleChange}
@@ -125,7 +100,6 @@ export default function Simulate() {
                     />
                   </div>
                 </div>
-
                 <div className="col-md-12 d-flex justify-content-around p-3">
                   <div className="col-md-4 border p-1">
                     <FormInput
@@ -141,13 +115,18 @@ export default function Simulate() {
                     Simulate
                   </button>
                 </div>
-                <p className="text-center fs-6 fw-lighter text-warning">*Check Your Predicted Credit Score Here 👇*</p>
+                <p className="text-center fs-6 fw-lighter text-warning">
+                  *Check Your Predicted Credit Score Here 👇*
+                </p>
               </div>
             </div>
           </form>
         </div>
       </div>
-      <ResultDisplay statement={"Predicted Credit Score :"} information={"580"}/>
+      <ResultDisplay
+        statement={"Predicted Credit Score :"}
+        information={finalScore}
+      />
     </>
   );
 }

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import FormInput from "./FormInput";
 import axios from "axios";
-import CreditCard from "./CreditCard";
 import ResultDisplay from "./ResultDisplay";
-import LoanCard from "./LoanCard";
+// import CreditCard from "./CreditCard";
+// import ResultDisplay from "./ResultDisplay";
+// import LoanCard from "./LoanCard";
 
 export default function LoanForm() {
   const [creditInput, setCreditInput] = useState({
@@ -16,7 +17,6 @@ export default function LoanForm() {
     cibilScore: "",
   });
   const [scoreOutput, setScoreOutput] = useState("");
-  const [isEligible, setIsEligible] = useState(false);
   function handleChange(event) {
     const { name, value } = event.target;
     setCreditInput((prevVal) => {
@@ -31,7 +31,7 @@ export default function LoanForm() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:9000/predict",
+        "http://localhost:9000/loanEligibility",
         creditInput
       );
       setScoreOutput(response.data.prediction);
@@ -84,6 +84,7 @@ export default function LoanForm() {
                             id="Graduate"
                             value={1}
                             onChange={handleChange}
+                            required
                           />
                           <label htmlFor="Graduate" className="form-label">
                             Graduate
@@ -97,6 +98,7 @@ export default function LoanForm() {
                             id="NotGraduate"
                             value={0}
                             onChange={handleChange}
+                            required
                           />
                           <label htmlFor="NonGraduate" className="form-label">
                             Non Graduate
@@ -133,6 +135,7 @@ export default function LoanForm() {
                             id="Yes"
                             value={1}
                             onChange={handleChange}
+                            required
                           />
                           <label htmlFor="Graduate" className="form-label">
                             YES
@@ -146,6 +149,7 @@ export default function LoanForm() {
                             id="No"
                             value={0}
                             onChange={handleChange}
+                            required
                           />
                           <label htmlFor="NonGraduate" className="form-label">
                             NO
@@ -202,18 +206,24 @@ export default function LoanForm() {
           </form>
         </div>
       </div>
-      {isEligible ? (
-        <>
-          <ResultDisplay statement={"Your Eligible For"} information={"Loan"} />
-          <LoanCard />
-        </>
+      {scoreOutput ? (
+        scoreOutput ? (
+          <ResultDisplay
+            statement={"You Are Eligible For Loan"}
+            information={"ELIGIBLE"}
+          />
+        ) : (
+          <ResultDisplay
+            statement={"You Are Not Eligible For Loan"}
+            information={"NOT ELIGIBLE"}
+          />
+        )
       ) : (
-        // <ResultDisplay statement={"We Are Sorry! You are Not Eligible For Any"} information={"Loan"} />
-        ""
+        <ResultDisplay
+          statement={"Know Your Credit Score by Entering Details In Above Form"}
+          information={""}
+        />
       )}
-      {/* Loan Eligibility */}
-
-      {/* Loan Offers */}
     </>
   );
 }

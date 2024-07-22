@@ -1,12 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# app = Flask(__name__)
-# CORS(app)
+app = Flask(__name__)
+CORS(app)
 
 
 class CreditScoreSimulator:
-    def __init__(self, initial_score=650):
+    def _init_(self, initial_score=650):
         self.credit_score = initial_score
 
     def apply_payment_history(self, on_time_payments, missed_payments):
@@ -57,10 +57,13 @@ class CreditScoreSimulator:
 
 # @app.route('/simulate', methods=['POST'])
 def simulate():
-    data = request.json
-    simulator = CreditScoreSimulator()
-    final_score = simulator.simulate(data['actions'])
-    return jsonify({'final_score': final_score})
+    try:
+        data = request.json
+        simulator = CreditScoreSimulator()
+        final_score = simulator.simulate(data['actions'])
+        return jsonify({'final_score': final_score})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
-# if __name__ == '__main__':
+# if _name_ == '_main_':
 #     app.run(debug=True)
